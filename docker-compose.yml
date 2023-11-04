@@ -1,0 +1,45 @@
+version: "3.4"
+
+services:
+  SqlServerDb:
+    container_name: SqlServerContainer
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    ports:
+      - 1433:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Express
+      - MSSQL_SA_PASSWORD=Qwerty123456@
+    volumes:
+      - D:\mnt\docker:/var/opt/mssql/data
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "Qwerty123456@" -Q "SELECT GETDATE()" || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  WebAppMVC:
+    container_name: WebAppMVCContainer
+    image: mvc-ddd
+    ports:
+      - 8085:80
+    build:
+      context: .
+      dockerfile: WebApp/Dockerfile
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      - SqlServerDb
+
+  InitDB:
+    container_name: InitDBContainer
+    image: mcr.microsoft.com/mssql-tools
+    volumes:
+      - ./InitDB/init-script.sql:/init/init-script.sql
+    depends_on:
+      WebAppMVC:
+        condition: service_healthy
+    command: /bin/bash -c "/opt/mssql-tools/bin/sqlcmd -S SqlServerContainer -U sa -P Qwerty123456@ -i /init/init-script.sql"

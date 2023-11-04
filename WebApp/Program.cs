@@ -1,17 +1,17 @@
 using Application;
 using Persistence;
+using Persistence.Context;
 using Repository;
+using WebApp;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddNewtonsoftJson();
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddRepository();
 builder.Services.AddApplication();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-builder.Services.AddControllers().AddNewtonsoftJson();
 
 var app = builder.Build();
 
@@ -34,4 +34,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Order}/{action=Index}/{id?}");
 
+app.MigrateDatabase<DBOrderContext>(builder.Configuration);
 app.Run();
