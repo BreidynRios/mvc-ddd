@@ -20,7 +20,8 @@ services:
 
   WebAppMVC:
     container_name: WebAppMVCContainer
-    image: mvc-ddd
+    #image: mvc-ddd
+    image: breidyn/mvc-ddd:v1.0
     ports:
       - 8085:80
     build:
