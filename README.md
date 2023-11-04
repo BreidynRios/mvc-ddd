@@ -1,5 +1,11 @@
 # Project MVC with DDD
 
+### **Docker**
+1. Download the file **docker-compose.yml**
+2. In the console, write **docker-compose up -d** and press **Enter**
+3. In the browser write **http://localhost:8085** and press **Enter**
+
+### **Local**
 Open the project and select **Persistence** layer as Startup Project
 1. Open Tools > NuGet Package Manager > Package Manager Console
 2. In Default Project, select **Persistence**
